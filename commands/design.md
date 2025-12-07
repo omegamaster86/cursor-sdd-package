@@ -28,6 +28,7 @@ argument-hint: <feature-name:$1> [-y:$2]
 - `.cursor/rules/design-principles.md` から設計原則
 - `.cursor/templates/specs/research.md` から発見ログ構造
 - **`package.json`（プロジェクトルートに存在する場合）**: 既存の依存関係とバージョンを把握
+- `.cursor/rules/frontend.md`（存在する場合）からフロントエンド設計原則
 
 **要件承認の検証**:
 - `-y` フラグが提供された場合（$2 == "-y"）: spec.json で要件を自動承認
