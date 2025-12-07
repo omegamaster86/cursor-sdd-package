@@ -1,0 +1,33 @@
+{
+  "name": "cursor-sdd",
+  "version": "1.0.0",
+  "description": "Cursor SDD (Spec-Driven Development) - AI-powered spec templates, rules and commands for Cursor IDE",
+  "bin": {
+    "cursor-sdd": "./bin/setup.js"
+  },
+  "files": [
+    "bin",
+    "templates",
+    "rules",
+    "commands"
+  ],
+  "scripts": {
+    "postinstall": "node bin/setup.js --auto"
+  },
+  "keywords": [
+    "cursor",
+    "cursor-ide",
+    "sdd",
+    "spec-driven-development",
+    "ai-coding",
+    "development-workflow",
+    "code-generation"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "homepage": ""
+}
