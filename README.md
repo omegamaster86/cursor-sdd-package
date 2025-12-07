@@ -1,0 +1,87 @@
+# cursor-sdd
+
+Cursor IDE 向けの Spec-Driven Development (SDD) テンプレート、ルール、コマンド集。
+
+## インストール
+
+```bash
+npm install cursor-sdd
+```
+
+インストール時に自動的にプロジェクトの `.cursor/` フォルダにファイルがコピーされます。
+
+### 手動セットアップ
+
+既存の `.cursor/` がある場合は自動コピーがスキップされます。強制上書きする場合：
+
+```bash
+npx cursor-sdd --force
+```
+
+## 使い方
+
+Cursor IDE で以下のコマンドが使えるようになります：
+
+| コマンド | 説明 |
+|---------|------|
+| `/init` | プロジェクト仕様の初期化 |
+| `/requirements` | 要件定義書の生成 |
+| `/design` | 技術設計書の作成 |
+| `/tasks` | タスクの生成 |
+| `/impl` | 実装の開始 |
+| `/status` | 進捗確認 |
+| `/check-design` | 設計のレビュー |
+| `/difference-check` | 差分チェック |
+
+## 含まれるファイル
+
+```
+.cursor/
+├── commands/          # Cursor コマンド定義
+│   ├── init.md
+│   ├── requirements.md
+│   ├── design.md
+│   ├── tasks.md
+│   ├── impl.md
+│   ├── status.md
+│   ├── check-design.md
+│   └── difference-check.md
+├── rules/             # AI ルール・ガイドライン
+│   ├── design-principles.md
+│   ├── design-review.md
+│   ├── design-discovery-full.md
+│   ├── design-discovery-light.md
+│   ├── ears-format.md
+│   ├── gap-analysis.md
+│   ├── tasks-generation.md
+│   └── tasks-parallel-analysis.md
+└── templates/         # 仕様書テンプレート
+    └── specs/
+        ├── init.json
+        ├── requirements-init.md
+        ├── requirements.md
+        ├── design.md
+        ├── tasks.md
+        └── research.md
+```
+
+## ワークフロー
+
+```
+/init → /requirements → /design → /tasks → /impl
+                ↑                    ↓
+            /status ←←←←←←←←←←←←←←←←
+```
+
+1. `/init` - プロジェクトの基本情報を設定
+2. `/requirements` - ユーザーストーリーと要件を定義
+3. `/design` - 技術設計書を作成
+4. `/tasks` - 実装タスクを生成
+5. `/impl` - タスクを実装
+6. `/status` - 進捗を確認
+
+## License
+
+MIT
+
+# cursor-sdd-package
