@@ -25,6 +25,7 @@ argument-hint: <feature-name:$1> [-y:$2] [--sequential:$3]
 **必要なすべてのコンテキストを読み込み**:
 - `.cursor/$1/spec.json`、`requirements.md`、`design.md`
 - `.cursor/$1/tasks.md`（存在する場合、マージモード用）
+- `.cursor/rules/frontend.md`（フロントエンド実装制約）
 
 **承認の検証**:
 - `-y` フラグが提供された場合（$2 == "-y"）: spec.json で要件と設計を自動承認
