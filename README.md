@@ -33,6 +33,13 @@ Cursor IDE で以下のコマンドが使えるようになります：
 | `/check-design` | 設計のレビュー |
 | `/difference-check` | 差分チェック |
 
+### `/init` の使い分け
+
+- **PJ全体を初期化**: `/init <プロジェクト説明>`
+- **個別画面/機能を初期化**: `/init --feature billing-history <画面の説明>`
+  - `--feature` / `-f` で指定したキーが `.cursor/<PJ名>/<feature>` ディレクトリとして作成されます
+  - 以降の `/requirements` などは `<PJ名>/<feature>` を引数に渡してください（例: `/requirements my-project/billing-history`）
+
 ## 含まれるファイル
 
 ```
