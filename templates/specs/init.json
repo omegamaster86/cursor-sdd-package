@@ -1,5 +1,10 @@
 {
+  "project_name": "{{PROJECT_NAME}}",
   "feature_name": "{{FEATURE_NAME}}",
+  "feature_key": "{{FEATURE_KEY}}",
+  "feature_path": "{{FEATURE_PATH}}",
+  "mode": "{{INIT_MODE}}",
+  "project_summary": "{{PROJECT_DESCRIPTION}}",
   "created_at": "{{TIMESTAMP}}",
   "updated_at": "{{TIMESTAMP}}",
   "language": "ja",
