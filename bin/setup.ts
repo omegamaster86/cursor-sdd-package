@@ -10,13 +10,10 @@ const isForce = process.argv.includes('--force');
 
 // パッケージのルートディレクトリを取得
 const packageRoot = path.resolve(__dirname, '..');
-const FOLDERS_BY_MODE = {
-  new: ['commands', 'rules', 'templates'],
-  assign: ['assign'],
+const SOURCE_BY_MODE = {
+  new: path.join(packageRoot, 'new'),
+  assign: path.join(packageRoot, 'assign'),
 };
-const MANAGED_FOLDERS = Array.from(
-  new Set([...FOLDERS_BY_MODE.new, ...FOLDERS_BY_MODE.assign, 'bin'])
-);
 
 // プロジェクトのルートを取得（node_modules の2つ上）
 function getProjectRoot() {
@@ -63,16 +60,11 @@ function copyRecursive(src, dest) {
   }
 }
 
-function cleanOtherFolders(mode) {
-  const keep = new Set(FOLDERS_BY_MODE[mode] || []);
-  for (const folder of MANAGED_FOLDERS) {
-    if (keep.has(folder)) continue;
-    const dest = path.join(targetDir, folder);
-    if (fs.existsSync(dest)) {
-      fs.rmSync(dest, { recursive: true, force: true });
-      console.log(`  🧹 Removed: ${path.relative(projectRoot, dest)}`);
-    }
+function cleanTargetDir() {
+  if (fs.existsSync(targetDir)) {
+    fs.rmSync(targetDir, { recursive: true, force: true });
   }
+  fs.mkdirSync(targetDir, { recursive: true });
 }
 
 function getArgValue(flag) {
@@ -139,9 +131,11 @@ function resolveMode() {
   return Promise.resolve('new');
 }
 
-function getFolders(mode) {
-  const candidates = FOLDERS_BY_MODE[mode] || [];
-  return candidates.filter((folder) => fs.existsSync(path.join(packageRoot, folder)));
+function getFolders(sourceRoot) {
+  if (!fs.existsSync(sourceRoot)) return [];
+  return fs
+    .readdirSync(sourceRoot)
+    .filter((item) => fs.statSync(path.join(sourceRoot, item)).isDirectory());
 }
 
 function setup({ mode, sourceRoot, folders }) {
@@ -149,22 +143,8 @@ function setup({ mode, sourceRoot, folders }) {
   console.log(`📁 Target: ${targetDir}`);
   console.log(`🎚️  Mode: ${mode}\n`);
 
-  // 自動実行時は既存の .cursor がある場合スキップ
-  if (isAuto && fs.existsSync(targetDir) && !isForce) {
-    // 最低限 .cursor がある前提で掃除だけはする
-    cleanOtherFolders(mode);
-    console.log('ℹ️  .cursor already exists. Run `npx cursor-sdd --force` to overwrite.');
-    console.log('ℹ️  Cleaned other mode folders, skipping copy due to --auto.');
-    process.exit(0);
-  }
-
-  // .cursor ディレクトリを作成
-  if (!fs.existsSync(targetDir)) {
-    fs.mkdirSync(targetDir, { recursive: true });
-  }
-
-  // 選択したモード以外のフォルダを掃除（手動実行時も確実に実施）
-  cleanOtherFolders(mode);
+  // 既存 .cursor は問答無用で削除してクリーンにする
+  cleanTargetDir();
 
   if (!folders.length) {
     console.log(`ℹ️  No folders to copy for mode: ${mode}.`);
@@ -180,9 +160,6 @@ function setup({ mode, sourceRoot, folders }) {
     copyRecursive(src, dest);
   }
 
-  // 念のためコピー後にも掃除を一度実施
-  cleanOtherFolders(mode);
-
   console.log('\n✨ Cursor SDD setup complete!\n');
   console.log('Available commands:');
   console.log('  /init         - Initialize project specs');
@@ -195,8 +172,8 @@ function setup({ mode, sourceRoot, folders }) {
 
 (async () => {
   const mode = await resolveMode();
-  const sourceRoot = packageRoot;
-  const folders = getFolders(mode);
+  const sourceRoot = SOURCE_BY_MODE[mode] || SOURCE_BY_MODE.new || packageRoot;
+  const folders = getFolders(sourceRoot);
 
   setup({ mode, sourceRoot, folders });
 })().catch((err) => {
