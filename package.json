@@ -3,7 +3,7 @@
   "version": "1.0.7",
   "description": "Cursor SDD (Spec-Driven Development) - AI-powered spec templates, rules and commands for Cursor IDE",
   "bin": {
-    "cursor-sdd": "./bin/setup.js"
+    "cursor-sdd": "./bin/setup.ts"
   },
   "files": [
     "bin",
@@ -13,7 +13,7 @@
     "assign"
   ],
   "scripts": {
-    "postinstall": "node bin/setup.js --auto"
+    "postinstall": "tsx bin/setup.ts --auto"
   },
   "keywords": [
     "cursor",
@@ -26,6 +26,9 @@
   ],
   "author": "",
   "license": "MIT",
+  "dependencies": {
+    "tsx": "^4.7.0"
+  },
   "repository": {
     "type": "git",
     "url": ""

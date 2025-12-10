@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 // @ts-nocheck
 
 const fs = require('fs');
@@ -109,12 +109,12 @@ function createTTYInterface() {
   const input = process.stdin.isTTY
     ? process.stdin
     : (() => {
-      try {
-        return fs.createReadStream('/dev/tty');
-      } catch {
-        return process.stdin;
-      }
-    })();
+        try {
+          return fs.createReadStream('/dev/tty');
+        } catch {
+          return process.stdin;
+        }
+      })();
   const output = process.stdout; // 出力は常に標準出力に寄せる
   return readline.createInterface({ input, output });
 }
