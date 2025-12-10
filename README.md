@@ -12,8 +12,8 @@ npx install cursor-sdd
 
 ### モード指定
 
-- 対話プロンプト: `npm install cursor-sdd` 実行時に `new` / `assign` を選択
-- 非対話や CI: `npm install cursor-sdd --mode assign` または環境変数 `CURSOR_SDD_MODE=assign`
+- 対話プロンプト: `npx install cursor-sdd` 実行時に `new` / `assign` を選択
+- 非対話や CI: `npx install cursor-sdd --mode assign` または環境変数 `CURSOR_SDD_MODE=assign`
 - 省略時デフォルト: `new`
 
 ### 手動セットアップ
