@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ts-nocheck
 
 const fs = require('fs');
 const path = require('path');
@@ -13,6 +14,9 @@ const FOLDERS_BY_MODE = {
   new: ['commands', 'rules', 'templates'],
   assign: ['assign'],
 };
+const MANAGED_FOLDERS = Array.from(
+  new Set([...FOLDERS_BY_MODE.new, ...FOLDERS_BY_MODE.assign, 'bin'])
+);
 
 // プロジェクトのルートを取得（node_modules の2つ上）
 function getProjectRoot() {
@@ -56,6 +60,20 @@ function copyRecursive(src, dest) {
     }
     fs.copyFileSync(src, dest);
     console.log(`  ✅ ${path.relative(projectRoot, dest)}`);
+  }
+}
+
+function cleanOtherFolders(mode) {
+  if (!fs.existsSync(targetDir)) return;
+
+  const keep = new Set(FOLDERS_BY_MODE[mode] || []);
+  for (const folder of MANAGED_FOLDERS) {
+    if (keep.has(folder)) continue;
+    const dest = path.join(targetDir, folder);
+    if (fs.existsSync(dest)) {
+      fs.rmSync(dest, { recursive: true, force: true });
+      console.log(`  🧹 Removed: ${path.relative(projectRoot, dest)}`);
+    }
   }
 }
 
@@ -143,6 +161,9 @@ function setup({ mode, sourceRoot, folders }) {
   if (!fs.existsSync(targetDir)) {
     fs.mkdirSync(targetDir, { recursive: true });
   }
+
+  // 選択したモード以外のフォルダを掃除
+  cleanOtherFolders(mode);
 
   if (!folders.length) {
     console.log(`ℹ️  No folders to copy for mode: ${mode}.`);
