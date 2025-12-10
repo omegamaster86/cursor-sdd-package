@@ -151,9 +151,13 @@ function setup({ mode, sourceRoot, folders }) {
   console.log(`📁 Target: ${targetDir}`);
   console.log(`🎚️  Mode: ${mode}\n`);
 
+  // 選択したモード以外のフォルダを先に掃除
+  cleanOtherFolders(mode);
+
   // 自動実行時は既存の .cursor がある場合スキップ
   if (isAuto && fs.existsSync(targetDir) && !isForce) {
     console.log('ℹ️  .cursor already exists. Run `npx cursor-sdd --force` to overwrite.');
+    console.log('ℹ️  Cleaned other mode folders, skipping copy due to --auto.');
     process.exit(0);
   }
 
@@ -161,9 +165,6 @@ function setup({ mode, sourceRoot, folders }) {
   if (!fs.existsSync(targetDir)) {
     fs.mkdirSync(targetDir, { recursive: true });
   }
-
-  // 選択したモード以外のフォルダを掃除
-  cleanOtherFolders(mode);
 
   if (!folders.length) {
     console.log(`ℹ️  No folders to copy for mode: ${mode}.`);
