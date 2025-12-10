@@ -7,9 +7,7 @@
   },
   "files": [
     "bin",
-    "templates",
-    "rules",
-    "commands",
+    "new",
     "assign"
   ],
   "scripts": {
