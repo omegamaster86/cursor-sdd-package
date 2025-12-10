@@ -71,12 +71,38 @@ function normalizeMode(value) {
   return null;
 }
 
+function hasTTY() {
+  if (process.stdout.isTTY && process.stdin.isTTY) return true;
+  // npm install 時に stdin がパイプ扱いになる場合のため /dev/tty を確認
+  try {
+    fs.accessSync('/dev/tty', fs.constants.R_OK | fs.constants.W_OK);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function createTTYInterface() {
+  // stdin が非TTYでも /dev/tty を使って対話できるようにする
+  const input = process.stdin.isTTY
+    ? process.stdin
+    : (() => {
+      try {
+        return fs.createReadStream('/dev/tty');
+      } catch {
+        return process.stdin;
+      }
+    })();
+  const output = process.stdout; // 出力は常に標準出力に寄せる
+  return readline.createInterface({ input, output });
+}
+
 function shouldPromptForMode(explicitMode) {
-  return !explicitMode && process.stdout.isTTY && process.stdin.isTTY && !process.env.CI;
+  return !explicitMode && hasTTY() && !process.env.CI;
 }
 
 async function askMode() {
-  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  const rl = createTTYInterface();
   const answer = await new Promise((resolve) => {
     rl.question('新規PJを立ち上げますか？既存PJにアサインしますか？ [n]ew/[a]ssign (default: new): ', resolve);
   });
