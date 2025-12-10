@@ -5,7 +5,7 @@ Cursor IDE 向けの Spec-Driven Development (SDD) テンプレート、ルー�
 ## インストール
 
 ```bash
-npm install cursor-sdd
+npx install cursor-sdd
 ```
 
 インストール時に自動的にプロジェクトの `.cursor/` フォルダにファイルがコピーされます。対話可能な環境では「新規のPJを立ち上げる / 既存PJにアサインする」を選択できます。
