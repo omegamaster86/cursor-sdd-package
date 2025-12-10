@@ -9,7 +9,8 @@
     "bin",
     "templates",
     "rules",
-    "commands"
+    "commands",
+    "assign"
   ],
   "scripts": {
     "postinstall": "node bin/setup.js --auto"

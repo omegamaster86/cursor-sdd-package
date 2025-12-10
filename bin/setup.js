@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const readline = require('readline');
 
 const isAuto = process.argv.includes('--auto');
 const isForce = process.argv.includes('--force');
@@ -12,36 +13,34 @@ const packageRoot = path.resolve(__dirname, '..');
 // プロジェクトのルートを取得（node_modules の2つ上）
 function getProjectRoot() {
   let current = process.cwd();
-  
+
   // npm install 経由の場合は INIT_CWD を使用
   if (process.env.INIT_CWD) {
     return process.env.INIT_CWD;
   }
-  
+
   // node_modules から呼ばれた場合
   const nodeModulesIndex = __dirname.indexOf('node_modules');
   if (nodeModulesIndex !== -1) {
     return __dirname.substring(0, nodeModulesIndex);
   }
-  
+
   return current;
 }
 
 const projectRoot = getProjectRoot();
 const targetDir = path.join(projectRoot, '.cursor');
 
-const folders = ['templates', 'rules', 'commands'];
-
 function copyRecursive(src, dest) {
   if (!fs.existsSync(src)) return;
-  
+
   const stat = fs.statSync(src);
-  
+
   if (stat.isDirectory()) {
     if (!fs.existsSync(dest)) {
       fs.mkdirSync(dest, { recursive: true });
     }
-    
+
     for (const item of fs.readdirSync(src)) {
       copyRecursive(path.join(src, item), path.join(dest, item));
     }
@@ -56,24 +55,81 @@ function copyRecursive(src, dest) {
   }
 }
 
-function setup() {
+function getArgValue(flag) {
+  const idx = process.argv.indexOf(flag);
+  if (idx === -1) return null;
+  const next = process.argv[idx + 1];
+  if (!next || next.startsWith('-')) return null;
+  return next;
+}
+
+function normalizeMode(value) {
+  if (!value) return null;
+  const lower = value.toLowerCase();
+  if (lower === 'assign' || lower === 'a') return 'assign';
+  if (lower === 'new' || lower === 'n') return 'new';
+  return null;
+}
+
+function shouldPromptForMode(explicitMode) {
+  return !explicitMode && process.stdout.isTTY && process.stdin.isTTY && !process.env.CI;
+}
+
+async function askMode() {
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  const answer = await new Promise((resolve) => {
+    rl.question('新規PJを立ち上げますか？既存PJにアサインしますか？ [n]ew/[a]ssign (default: new): ', resolve);
+  });
+  rl.close();
+  return normalizeMode(answer) || 'new';
+}
+
+function resolveMode() {
+  const explicitMode = normalizeMode(getArgValue('--mode') || process.env.CURSOR_SDD_MODE);
+  if (explicitMode) return Promise.resolve(explicitMode);
+  if (shouldPromptForMode(explicitMode)) {
+    return askMode();
+  }
+  return Promise.resolve('new');
+}
+
+function getFolders(sourceRoot) {
+  if (!fs.existsSync(sourceRoot)) return [];
+  return fs
+    .readdirSync(sourceRoot)
+    .filter((item) => fs.statSync(path.join(sourceRoot, item)).isDirectory());
+}
+
+function setup({ mode, sourceRoot, folders }) {
   console.log('\n🚀 Setting up Cursor SDD...\n');
-  console.log(`📁 Target: ${targetDir}\n`);
-  
+  console.log(`📁 Target: ${targetDir}`);
+  console.log(`🎚️  Mode: ${mode}\n`);
+
+  // 自動実行時は既存の .cursor がある場合スキップ
+  if (isAuto && fs.existsSync(targetDir) && !isForce) {
+    console.log('ℹ️  .cursor already exists. Run `npx cursor-sdd --force` to overwrite.');
+    process.exit(0);
+  }
+
   // .cursor ディレクトリを作成
   if (!fs.existsSync(targetDir)) {
     fs.mkdirSync(targetDir, { recursive: true });
   }
-  
+
+  if (!folders.length) {
+    console.log(`ℹ️  No folders to copy for mode: ${mode}.`);
+    return;
+  }
+
   // 各フォルダをコピー
   for (const folder of folders) {
-    const src = path.join(packageRoot, folder);
+    const src = path.join(sourceRoot, folder);
     const dest = path.join(targetDir, folder);
-    
+
     console.log(`📂 ${folder}/`);
     copyRecursive(src, dest);
   }
-  
+
   console.log('\n✨ Cursor SDD setup complete!\n');
   console.log('Available commands:');
   console.log('  /init         - Initialize project specs');
@@ -84,11 +140,14 @@ function setup() {
   console.log('  /status       - Check status\n');
 }
 
-// 自動実行時は既存の .cursor がある場合スキップ
-if (isAuto && fs.existsSync(targetDir) && !isForce) {
-  console.log('ℹ️  .cursor already exists. Run `npx cursor-sdd --force` to overwrite.');
-  process.exit(0);
-}
+(async () => {
+  const mode = await resolveMode();
+  const sourceRoot = mode === 'assign' ? path.join(packageRoot, 'assign') : packageRoot;
+  const folders = getFolders(sourceRoot);
 
-setup();
+  setup({ mode, sourceRoot, folders });
+})().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
 
