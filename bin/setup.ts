@@ -64,8 +64,6 @@ function copyRecursive(src, dest) {
 }
 
 function cleanOtherFolders(mode) {
-  if (!fs.existsSync(targetDir)) return;
-
   const keep = new Set(FOLDERS_BY_MODE[mode] || []);
   for (const folder of MANAGED_FOLDERS) {
     if (keep.has(folder)) continue;
@@ -151,11 +149,10 @@ function setup({ mode, sourceRoot, folders }) {
   console.log(`📁 Target: ${targetDir}`);
   console.log(`🎚️  Mode: ${mode}\n`);
 
-  // 選択したモード以外のフォルダを先に掃除
-  cleanOtherFolders(mode);
-
   // 自動実行時は既存の .cursor がある場合スキップ
   if (isAuto && fs.existsSync(targetDir) && !isForce) {
+    // 最低限 .cursor がある前提で掃除だけはする
+    cleanOtherFolders(mode);
     console.log('ℹ️  .cursor already exists. Run `npx cursor-sdd --force` to overwrite.');
     console.log('ℹ️  Cleaned other mode folders, skipping copy due to --auto.');
     process.exit(0);
@@ -165,6 +162,9 @@ function setup({ mode, sourceRoot, folders }) {
   if (!fs.existsSync(targetDir)) {
     fs.mkdirSync(targetDir, { recursive: true });
   }
+
+  // 選択したモード以外のフォルダを掃除（手動実行時も確実に実施）
+  cleanOtherFolders(mode);
 
   if (!folders.length) {
     console.log(`ℹ️  No folders to copy for mode: ${mode}.`);
@@ -179,6 +179,9 @@ function setup({ mode, sourceRoot, folders }) {
     console.log(`📂 ${folder}/`);
     copyRecursive(src, dest);
   }
+
+  // 念のためコピー後にも掃除を一度実施
+  cleanOtherFolders(mode);
 
   console.log('\n✨ Cursor SDD setup complete!\n');
   console.log('Available commands:');
