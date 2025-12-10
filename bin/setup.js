@@ -9,6 +9,10 @@ const isForce = process.argv.includes('--force');
 
 // パッケージのルートディレクトリを取得
 const packageRoot = path.resolve(__dirname, '..');
+const FOLDERS_BY_MODE = {
+  new: ['commands', 'rules', 'templates'],
+  assign: ['assign'],
+};
 
 // プロジェクトのルートを取得（node_modules の2つ上）
 function getProjectRoot() {
@@ -119,11 +123,9 @@ function resolveMode() {
   return Promise.resolve('new');
 }
 
-function getFolders(sourceRoot) {
-  if (!fs.existsSync(sourceRoot)) return [];
-  return fs
-    .readdirSync(sourceRoot)
-    .filter((item) => fs.statSync(path.join(sourceRoot, item)).isDirectory());
+function getFolders(mode) {
+  const candidates = FOLDERS_BY_MODE[mode] || [];
+  return candidates.filter((folder) => fs.existsSync(path.join(packageRoot, folder)));
 }
 
 function setup({ mode, sourceRoot, folders }) {
@@ -168,8 +170,8 @@ function setup({ mode, sourceRoot, folders }) {
 
 (async () => {
   const mode = await resolveMode();
-  const sourceRoot = mode === 'assign' ? path.join(packageRoot, 'assign') : packageRoot;
-  const folders = getFolders(sourceRoot);
+  const sourceRoot = packageRoot;
+  const folders = getFolders(mode);
 
   setup({ mode, sourceRoot, folders });
 })().catch((err) => {
