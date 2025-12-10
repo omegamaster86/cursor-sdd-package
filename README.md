@@ -8,7 +8,13 @@ Cursor IDE 向けの Spec-Driven Development (SDD) テンプレート、ルー�
 npm install cursor-sdd
 ```
 
-インストール時に自動的にプロジェクトの `.cursor/` フォルダにファイルがコピーされます。
+インストール時に自動的にプロジェクトの `.cursor/` フォルダにファイルがコピーされます。対話可能な環境では「新規のPJを立ち上げる / 既存PJにアサインする」を選択できます。
+
+### モード指定
+
+- 対話プロンプト: `npm install cursor-sdd` 実行時に `new` / `assign` を選択
+- 非対話や CI: `npm install cursor-sdd --mode assign` または環境変数 `CURSOR_SDD_MODE=assign`
+- 省略時デフォルト: `new`
 
 ### 手動セットアップ
 
@@ -44,6 +50,7 @@ Cursor IDE で以下のコマンドが使えるようになります：
 
 ```
 .cursor/
+├── (assign 用の内容をコピーする場合は assign/ 配下がコピーされます)
 ├── commands/          # Cursor コマンド定義
 │   ├── init.md
 │   ├── requirements.md
@@ -70,6 +77,8 @@ Cursor IDE で以下のコマンドが使えるようになります：
         ├── design.md
         ├── tasks.md
         └── research.md
+
+assign モード時に配布したいファイルはリポジトリ直下の `assign/` に配置してください（例: `assign/commands`, `assign/rules`, `assign/templates`）。
 ```
 
 ## ワークフロー
@@ -92,3 +101,4 @@ Cursor IDE で以下のコマンドが使えるようになります：
 MIT
 
 # cursor-sdd-package
+
