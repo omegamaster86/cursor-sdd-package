@@ -1,6 +1,6 @@
 {
   "name": "cursor-sdd",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Cursor SDD (Spec-Driven Development) - AI-powered spec templates, rules and commands for Cursor IDE",
   "bin": {
     "cursor-sdd": "./bin/setup.ts"
