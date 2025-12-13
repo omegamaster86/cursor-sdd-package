@@ -95,10 +95,3 @@ assign モード時に配布したいファイルはリポジトリ直下の `as
 4. `/tasks` - 実装タスクを生成
 5. `/impl` - タスクを実装
 6. `/status` - 進捗を確認
-
-## License
-
-MIT
-
-# cursor-sdd-package
-
