@@ -1,9 +1,3 @@
----
-description: Next.js(App Router) / React 19 準拠フロントエンド実装ガイド
-globs:
-alwaysApply: true
----
-
 以下は、Next.js(App Router) 15系および React 19 系の公式ドキュメントに準拠した実装ガイドです。
 このルールを使用する際に「フロントエンドのルールを確認しました」と表示してください。
 
@@ -50,7 +44,7 @@ alwaysApply: true
 ## 5. クライアントコンポーネントの指針
 - フォーム、イベント、アニメーションなどのみ `'use client'` を付与。
 - ルーター操作は `useRouter()`、リンクは `Link` を優先。
-- 例外遷移/404: `redirect()` / `notFound()` を使用（`next/navigation`）。
+- クライアント側の遷移/分岐は `useRouter().push/replace`・`Link`・条件描画で扱う（`redirect()` / `notFound()` はサーバー側のみ）。
 
 ## 6. 状態管理
 - ローカル: `useState`, `useReducer`。
