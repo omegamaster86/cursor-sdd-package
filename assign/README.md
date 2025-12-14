@@ -6,4 +6,11 @@
 - `assign/rules` … アサイン時専用のルール
 - `assign/templates` … アサイン時専用のテンプレート
 
-`npm install cursor-sdd --mode assign` あるいは対話選択で `assign` を選ぶと、このフォルダ配下が `.cursor/` にコピーされます。
+`npx cursor-sdd@latest --mode assign` あるいは対話選択で `assign` を選ぶと、このフォルダ配下が `.cursor/` にコピーされます。
+
+依存に入れる場合は、インストール後にセットアップを実行してください：
+
+```bash
+npm i -D cursor-sdd
+npx cursor-sdd --mode assign
+```

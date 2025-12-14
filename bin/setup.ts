@@ -7,6 +7,7 @@ const readline = require('readline');
 
 const isAuto = process.argv.includes('--auto');
 const isForce = process.argv.includes('--force');
+const isHelp = process.argv.includes('--help') || process.argv.includes('-h');
 
 // パッケージのルートディレクトリを取得
 const packageRoot = path.resolve(__dirname, '..');
@@ -83,6 +84,26 @@ function normalizeMode(value) {
   return null;
 }
 
+function printHelp() {
+  console.log(`
+cursor-sdd - Cursor SDD セットアップ
+
+使い方:
+  npx cursor-sdd@latest [--mode new|assign] [--force]
+
+オプション:
+  --mode <new|assign>   コピーするテンプレートのモード（省略時: 対話可能なら選択 / 非対話は new）
+  --force               既存の .cursor/ があっても上書き
+  --auto                対話を無効化（npm install の postinstall など向け）
+  -h, --help            ヘルプ表示
+
+例:
+  npx cursor-sdd@latest --mode new
+  npx cursor-sdd@latest --mode assign
+  npx cursor-sdd@latest --mode assign --force
+`.trim());
+}
+
 function hasTTY() {
   if (process.stdout.isTTY && process.stdin.isTTY) return true;
   // npm install 時に stdin がパイプ扱いになる場合のため /dev/tty を確認
@@ -110,7 +131,8 @@ function createTTYInterface() {
 }
 
 function shouldPromptForMode(explicitMode) {
-  return !explicitMode && hasTTY() && !process.env.CI;
+  // --auto 時はプロンプトを出さず default(new) に寄せる
+  return !explicitMode && !isAuto && hasTTY() && !process.env.CI;
 }
 
 async function askMode() {
@@ -123,7 +145,16 @@ async function askMode() {
 }
 
 function resolveMode() {
-  const explicitMode = normalizeMode(getArgValue('--mode') || process.env.CURSOR_SDD_MODE);
+  const rawModeArg = getArgValue('--mode');
+  const rawMode = rawModeArg || process.env.CURSOR_SDD_MODE;
+  const explicitMode = normalizeMode(rawMode);
+
+  // --mode が指定されているのに値が不正な場合は落とす（黙って default/new にならないように）
+  if (rawModeArg && !explicitMode) {
+    console.error(`\n❌ Invalid --mode value: ${rawModeArg}`);
+    console.error('   Use --mode new or --mode assign\n');
+    process.exit(1);
+  }
   if (explicitMode) return Promise.resolve(explicitMode);
   if (shouldPromptForMode(explicitMode)) {
     return askMode();
@@ -143,7 +174,14 @@ function setup({ mode, sourceRoot, folders }) {
   console.log(`📁 Target: ${targetDir}`);
   console.log(`🎚️  Mode: ${mode}\n`);
 
-  // 既存 .cursor は問答無用で削除してクリーンにする
+  // 既存 .cursor がある場合はデフォルトで破壊しない（--force で上書き）
+  if (fs.existsSync(targetDir) && !isForce) {
+    console.log(`\n⚠️  ${path.relative(projectRoot, targetDir)} already exists. Skip setup.`);
+    console.log('   上書きする場合は --force を付けて実行してください。\n');
+    return;
+  }
+
+  // ここからは安全にクリーンセットアップ
   cleanTargetDir();
 
   if (!folders.length) {
@@ -171,6 +209,10 @@ function setup({ mode, sourceRoot, folders }) {
 }
 
 (async () => {
+  if (isHelp) {
+    printHelp();
+    return;
+  }
   const mode = await resolveMode();
   const sourceRoot = SOURCE_BY_MODE[mode] || SOURCE_BY_MODE.new || packageRoot;
   const folders = getFolders(sourceRoot);

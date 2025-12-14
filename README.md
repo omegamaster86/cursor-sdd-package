@@ -5,23 +5,42 @@ Cursor IDE 向けの Spec-Driven Development (SDD) テンプレート、ルー�
 ## インストール
 
 ```bash
-npx install cursor-sdd
+# 推奨（都度実行・インストール不要）
+npx cursor-sdd@latest
+
+# 依存に入れたい場合（必要な時に自分で実行する）
+npm i -D cursor-sdd
 ```
 
-インストール時に自動的にプロジェクトの `.cursor/` フォルダにファイルがコピーされます。対話可能な環境では「新規のPJを立ち上げる / 既存PJにアサインする」を選択できます。
+実行時にプロジェクトの `.cursor/` フォルダにファイルがコピーされます。対話可能な環境では「新規のPJを立ち上げる / 既存PJにアサインする」を選択できます。
 
 ### モード指定
 
-- 対話プロンプト: `npx install cursor-sdd` 実行時に `new` / `assign` を選択
-- 非対話や CI: `npx install cursor-sdd --mode assign` または環境変数 `CURSOR_SDD_MODE=assign`
+- 明示指定（おすすめ）:
+
+```bash
+npx cursor-sdd@latest --mode new
+npx cursor-sdd@latest --mode assign
+```
+
+- 対話プロンプト: `npx cursor-sdd@latest` 実行時に `new` / `assign` を選択
+- 非対話や CI: `npx cursor-sdd@latest --mode assign` または環境変数 `CURSOR_SDD_MODE=assign`
 - 省略時デフォルト: `new`
+
+### 依存として入れた場合の実行
+
+`npm i -D cursor-sdd` しただけでは `.cursor/` は変更しません。セットアップは明示的に実行してください：
+
+```bash
+npx cursor-sdd --mode new
+```
 
 ### 手動セットアップ
 
 既存の `.cursor/` がある場合は自動コピーがスキップされます。強制上書きする場合：
 
 ```bash
-npx cursor-sdd --force
+npx cursor-sdd@latest --force
 ```
 
 ## 使い方
