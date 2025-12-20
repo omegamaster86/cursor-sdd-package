@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env npx tsx
 // @ts-nocheck
 
 const fs = require('fs');
@@ -8,7 +8,7 @@ const isForce = process.argv.includes('--force');
 
 // パッケージのルートディレクトリを取得
 const packageRoot = path.resolve(__dirname, '..');
-const sourceDir = path.join(packageRoot, 'new');
+const sourceDir = path.join(packageRoot, 'now');
 const FOLDERS = ['commands', 'rules', 'templates'];
 
 // プロジェクトのルートを取得
