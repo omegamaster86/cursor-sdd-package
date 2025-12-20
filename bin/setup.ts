@@ -67,12 +67,15 @@ function setup() {
 
   console.log('\n✨ Cursor SDD setup complete!\n');
   console.log('Available commands:');
-  console.log('  /init         - Initialize project specs');
-  console.log('  /requirements - Generate requirements');
-  console.log('  /design       - Create design document');
-  console.log('  /tasks        - Generate tasks');
-  console.log('  /impl         - Implementation');
-  console.log('  /status       - Check status\n');
+  console.log('  /init              - Initialize project specs');
+  console.log('  /requirements      - Generate requirements');
+  console.log('  /requirements-import - Import existing requirements');
+  console.log('  /design            - Create design document');
+  console.log('  /check-design      - Validate design document');
+  console.log('  /tasks             - Generate tasks');
+  console.log('  /impl              - Implementation');
+  console.log('  /status            - Check status');
+  console.log('  /difference-check  - Check differences\n');
 }
 
 setup();
