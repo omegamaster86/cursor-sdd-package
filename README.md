@@ -76,6 +76,7 @@ Cursor IDE で以下のコマンドが使えるようになります：
 │   ├── ears-format.md
 │   ├── frontend.md
 │   ├── gap-analysis.md
+│   ├── implementation.md
 │   ├── tasks-generation.md
 │   └── tasks-parallel-analysis.md
 └── templates/
