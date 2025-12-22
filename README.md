@@ -1,4 +1,4 @@
-# cursor-sdd
+# cursor-sdd-package
 
 Cursor IDE 向けの Spec-Driven Development (SDD) テンプレート、ルール、コマンド集。
 
@@ -101,10 +101,3 @@ Cursor IDE で以下のコマンドが使えるようになります：
                 ↑                    ↓
             /status ←←←←←←←←←←←←←←←←
 ```
-
-1. `/init` - プロジェクトの基本情報を設定
-2. `/requirements` - ユーザーストーリーと要件を定義
-3. `/design` - 技術設計書を作成
-4. `/tasks` - 実装タスクを生成
-5. `/impl` - タスクを実装
-6. `/status` - 進捗を確認
