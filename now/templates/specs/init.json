@@ -9,21 +9,64 @@
   "updated_at": "{{TIMESTAMP}}",
   "language": "ja",
   "phase": "initialized",
+  "phase_history": [
+    {
+      "phase": "initialized",
+      "at": "{{TIMESTAMP}}",
+      "summary": "Specを初期化"
+    }
+  ],
   "approvals": {
     "requirements": {
       "generated": false,
-      "approved": false
+      "approved": false,
+      "source": "generated"
     },
     "design": {
       "generated": false,
-      "approved": false
+      "approved": false,
+      "checked": false,
+      "check_result": null
     },
     "tasks": {
       "generated": false,
       "approved": false
     }
   },
-  "ready_for_implementation": false
+  "implementation": {
+    "started": false,
+    "completed": false,
+    "tasks_completed": [],
+    "last_task": null,
+    "red_green_evidence": []
+  },
+  "quality_gates": {
+    "design_check": {
+      "status": "not_run",
+      "checked_at": null,
+      "summary": null
+    },
+    "review": {
+      "status": "not_run",
+      "reviewed_at": null,
+      "critical_findings": 0,
+      "summary": null
+    },
+    "final_check": {
+      "status": "not_run",
+      "checked_at": null,
+      "summary": null
+    }
+  },
+  "traceability": {
+    "status": "not_generated",
+    "updated_at": null,
+    "requirement_count": 0,
+    "mapped_task_count": 0,
+    "unmapped_requirements": []
+  },
+  "ready_for_implementation": false,
+  "ready_for_release": false
 }
 
 

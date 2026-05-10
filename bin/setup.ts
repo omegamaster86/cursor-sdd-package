@@ -74,6 +74,9 @@ function setup() {
   console.log('  /check-design      - Validate design document');
   console.log('  /tasks             - Generate tasks');
   console.log('  /impl              - Implementation');
+  console.log('  /review            - Review implementation evidence');
+  console.log('  /trace             - Generate traceability');
+  console.log('  /final-check       - Final readiness check');
   console.log('  /status            - Check status');
   console.log('  /difference-check  - Check differences\n');
 }

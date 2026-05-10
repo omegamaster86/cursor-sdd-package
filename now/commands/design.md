@@ -109,7 +109,13 @@ argument-hint: <feature-name:$1> [-y:$2]
 3. **spec.json のメタデータを更新**:
    - `phase: "design-generated"` を設定
    - `approvals.design.generated: true, approved: false` を設定
+   - `approvals.design.checked: false` と `approvals.design.check_result: null` を設定
    - `approvals.requirements.approved: true` を設定
+   - `quality_gates.design_check.status: "not_run"` を設定
+   - `quality_gates.review.status: "not_run"` を設定
+   - `quality_gates.final_check.status: "not_run"` を設定
+   - `traceability.status: "stale"` を設定
+   - `phase_history` に `{ phase, at, summary }` を追記
    - `updated_at` タイムスタンプを更新
 
 ## 重要な制約
@@ -145,6 +151,7 @@ spec.json で指定された言語で簡潔なサマリーを提供:
    - 既存パッケージで活用するもの
    - 追加推奨パッケージ（あれば理由と共に）
 5. **次のアクション**: 承認ワークフローのガイダンス（安全性とフォールバック参照）
+6. **状態更新**: design check / review / final check が未実行に戻った場合は明記
 
 **フォーマット**: 簡潔なMarkdown（200語以内）- これはコマンド出力であり、設計ドキュメント自体ではない
 
@@ -179,7 +186,7 @@ spec.json で指定された言語で簡潔なサマリーを提供:
 
 **設計が承認された場合**:
 - `.cursor/$1/design.md` で生成された設計をレビュー
-- **オプション**: `/validate-design $1` でインタラクティブな品質レビューを実行
+- **オプション**: `/check-design $1` でインタラクティブな品質レビューを実行
 - その後 `/tasks $1 -y` で実装タスクを生成
 
 **修正が必要な場合**:

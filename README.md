@@ -48,6 +48,9 @@ Cursor IDE で以下のコマンドが使えるようになります：
 | `/check-design` | 設計書の検証 |
 | `/tasks` | タスクの生成 |
 | `/impl` | 実装の開始 |
+| `/review` | 仕様・実装・TDD証跡のレビュー |
+| `/trace` | 要件から実装証跡までのトレース生成 |
+| `/final-check` | リリース前の最終整合性チェック |
 | `/status` | 進捗確認 |
 | `/difference-check` | 差分チェック |
 
@@ -70,6 +73,9 @@ Cursor IDE で以下のコマンドが使えるようになります：
 │   ├── check-design.md
 │   ├── tasks.md
 │   ├── impl.md
+│   ├── review.md
+│   ├── trace.md
+│   ├── final-check.md
 │   ├── status.md
 │   └── difference-check.md
 ├── rules/             # AI ルール・ガイドライン
@@ -102,7 +108,9 @@ Cursor IDE で以下のコマンドが使えるようになります：
 ## ワークフロー
 
 ```
-/init → /requirements → /design → /tasks → /impl
-                ↑                    ↓
-            /status ←←←←←←←←←←←←←←←←
+/init → /requirements → /design → /tasks → /impl → /trace → /review → /final-check
+                ↑                       ↓          ↓        ↓
+            /status ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
 ```
+
+`spec.json` は各フェーズの承認状態、TDD の RED/GREEN 証跡、レビュー結果、最終チェック結果、トレーサビリティ状態を保持します。Coherence / impact analysis のような依存グラフは軽量版では含めず、必要になった場合の将来拡張として扱います。

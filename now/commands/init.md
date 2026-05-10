@@ -19,26 +19,39 @@ argument-hint: <project-description>
 
 ## 実行ステップ
 
-### ステップ1: プロジェクト名の取得
-ワークスペースのルートフォルダ名をプロジェクト名として使用する。
+### ステップ1: プロジェクト名と対象キーの取得
+- ワークスペースのルートフォルダ名をプロジェクト名として使用する。
+- `$ARGUMENTS` に `--feature <key>` または `-f <key>` が含まれる場合は、個別機能として初期化する。
+  - `PROJECT_NAME` はルートフォルダ名
+  - `FEATURE_KEY` は指定された key
+  - `FEATURE_NAME` は指定された key（説明から明確な表示名を抽出できる場合のみ自然な名前にする）
+  - `FEATURE_PATH` は `[PROJECT_NAME]/[FEATURE_KEY]`
+- `--feature` がない場合は、プロジェクト全体として初期化する。
+  - `FEATURE_KEY` と `FEATURE_NAME` はルートフォルダ名
+  - `FEATURE_PATH` は `[PROJECT_NAME]`
 
 ### ステップ2: ディレクトリ作成
-`.cursor/[ルートフォルダ名]/` と `.cursor/[ルートフォルダ名]/artifacts/` を作成する。
+`.cursor/[FEATURE_PATH]/` と `.cursor/[FEATURE_PATH]/artifacts/` を作成する。
 
 ### ステップ3: テンプレートを使用してファイルを初期化
 - `.cursor/templates/specs/init.json` を読み込み
 - `.cursor/templates/specs/requirements-init.md` を読み込み
 - プレースホルダーを置換:
-  - `{{FEATURE_NAME}}` → ルートフォルダ名（プロジェクト名）
+  - `{{PROJECT_NAME}}` → ルートフォルダ名（プロジェクト名）
+  - `{{FEATURE_NAME}}` → 対象名
+  - `{{FEATURE_KEY}}` → 対象キー
+  - `{{FEATURE_PATH}}` → `.cursor/` 配下の相対パス
+  - `{{INIT_MODE}}` → `project` または `feature`
   - `{{TIMESTAMP}}` → 現在の日付（YYYY/MM/DD 形式）
-  - `{{PROJECT_DESCRIPTION}}` → $ARGUMENTS
-- `spec.json` と `requirements.md` を `.cursor/[ルートフォルダ名]/` に書き込み
+  - `{{PROJECT_DESCRIPTION}}` → `--feature` 指定を除いた説明文
+- `spec.json` と `requirements.md` を `.cursor/[FEATURE_PATH]/` に書き込み
 
 ## 重要な制約
 - この段階で requirements/design/tasks を生成しない
 - ステージごとの開発原則に従う
 - 厳格なフェーズ分離を維持
 - このフェーズでは初期化のみを実行
+- spec.json の新しい状態管理フィールド（`phase_history`、`implementation`、`quality_gates`、`traceability`）を削除しない
 </instructions>
 
 ## ツールガイダンス
@@ -50,7 +63,7 @@ argument-hint: <project-description>
 ## 出力説明
 `spec.json` で指定された言語で以下の構造で出力:
 
-1. **プロジェクト名**: ルートフォルダ名から取得したプロジェクト名
+1. **プロジェクト名 / 対象**: ルートフォルダ名と FEATURE_PATH
 2. **プロジェクトサマリー**: 簡潔なサマリー（1文）
 3. **作成されたファイル**: フルパス付きの箇条書きリスト
 4. **次のステップ**: `/requirements` を示すコマンドブロック
@@ -64,7 +77,7 @@ argument-hint: <project-description>
 
 ## 安全性とフォールバック
 - **テンプレートが見つからない**: `.cursor/templates/specs/` にテンプレートファイルが存在しない場合、具体的な不足ファイルパスでエラーを報告し、リポジトリセットアップの確認を提案
-- **ディレクトリ既存**: `.cursor/[ルートフォルダ名]/` が既に存在する場合、上書きするか確認をユーザーに求める
+- **ディレクトリ既存**: `.cursor/[FEATURE_PATH]/` が既に存在する場合、上書きするか確認をユーザーに求める
 - **書き込み失敗**: 具体的なパスでエラーを報告し、権限またはディスク容量の確認を提案
 
 </output>

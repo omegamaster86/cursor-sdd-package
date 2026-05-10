@@ -41,7 +41,11 @@ argument-hint: <feature-name:$1>
 spec.json を以下のように更新:
 - `phase: "requirements-imported"` を設定
 - `approvals.requirements.generated: true` を設定
+- `approvals.requirements.approved: false` を設定
 - `approvals.requirements.source: "imported"` を追加
+- `phase_history` に `{ phase, at, summary }` を追記
+- 下流成果物が既にある場合は、影響確認が必要なため `quality_gates.review.status` と `quality_gates.final_check.status` を `not_run` または `stale` に更新
+- `traceability.status: "stale"` を設定
 - `updated_at` タイムスタンプを更新
 
 ## 重要な制約
