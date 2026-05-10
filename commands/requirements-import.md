@@ -1,9 +1,12 @@
 <meta>
-description: 既存の要件ドキュメントをインポート（初期化済みrequirements.mdから読み取り）
+description: 既存の要件ドキュメントをインポート（互換コマンド）
 argument-hint: <feature-name:$1>
 </meta>
 
 # 既存要件インポート
+
+> 互換運用のための専用コマンド。将来的に `/requirements --import` への統合を検討するが、
+> 現時点では本コマンドを正式サポートする。
 
 <background_information>
 - **ミッション**: 初期化済み requirements.md に記載された既存要件を正式な要件として取り込み、spec駆動開発のフローに統合
@@ -24,6 +27,7 @@ argument-hint: <feature-name:$1>
 - `.cursor/$1/spec.json` が存在することを確認（初期化済み）
 - `.cursor/$1/requirements.md` が存在することを確認
 - 「## プロジェクト説明（入力）」セクションに内容があることを確認
+- `.cursor/rules/spec-state-management.md` と `.cursor/rules/gate-invalidation-policy.md` を読み込み
 
 ### ステップ2: 既存要件の読み込み
 - `.cursor/$1/requirements.md` から「## プロジェクト説明（入力）」セクションの内容を抽出
@@ -38,15 +42,15 @@ argument-hint: <feature-name:$1>
 - 要件には連番を付与（1, 2, 3...）
 
 ### ステップ4: メタデータの更新
-spec.json を以下のように更新:
+spec.json は、共通ルール `.cursor/rules/spec-state-management.md` と
+`.cursor/rules/gate-invalidation-policy.md` に従って更新する。
+
 - `phase: "requirements-imported"` を設定
 - `approvals.requirements.generated: true` を設定
 - `approvals.requirements.approved: false` を設定
 - `approvals.requirements.source: "imported"` を追加
-- `phase_history` に `{ phase, at, summary }` を追記
 - 下流成果物が既にある場合は、影響確認が必要なため `quality_gates.review.status` と `quality_gates.final_check.status` を `not_run` または `stale` に更新
 - `traceability.status: "stale"` を設定
-- `updated_at` タイムスタンプを更新
 
 ## 重要な制約
 - 既存要件の内容を勝手に変更・削除しない

@@ -1,51 +1,51 @@
 <meta>
-description: TDD手法を使用してspecタスクを実行
-argument-hint: <feature-name:$1> [task-numbers:$2]
+description: TDD手法を使用して要件ベースの実装を実行
+argument-hint: <feature-name:$1> [requirement-ids:$2]
 </meta>
 
-# 実装タスク実行
+# 実装実行
 
 <background_information>
-- **ミッション**: 承認済み仕様に基づいて、テスト駆動開発手法を使用して実装タスクを実行
+- **ミッション**: 承認済み仕様に基づいて、テスト駆動開発手法を使用して要件ベース実装を進める
 - **成功基準**:
   - すべてのテストを実装コードより先に記述
   - コードがすべてのテストに合格しリグレッションなし
-  - タスクが tasks.md で完了としてマーク
+  - 対象要件に対する実装証跡が spec.json に記録される
   - 実装が設計と要件に整合
 </background_information>
 
 <instructions>
 ## コアタスク
-テスト駆動開発を使用して、機能 **$1** の実装タスクを実行する。
+テスト駆動開発を使用して、機能 **$1** の要件ベース実装を実行する。
 
 ## 実行ステップ
 
 ### ステップ1: コンテキストの読み込み
 
 **必要なすべてのコンテキストを読み込み**:
-- `.cursor/$1/spec.json`、`requirements.md`、`design.md`、`tasks.md`
-- `.cursor/rules/implementation.md` からtaskに関するルール参照（必須）
+- `.cursor/$1/spec.json`、`requirements.md`、`design.md`
+- `.cursor/rules/implementation.md` から実装ルール参照（必須）
 - `.cursor/rules/frontend.md`（存在する場合）からフロントエンド実装ルール
 
 **承認の検証**:
-- spec.json でタスクが承認されていることを確認（されていない場合は停止、安全性とフォールバック参照）
-- `ready_for_implementation` が false の場合でも、`approvals.tasks.approved` が true であれば進行してよい。その場合は spec.json を補正して `ready_for_implementation: true` に更新する。
+- spec.json で要件と設計が承認されていることを確認（未承認なら停止、安全性とフォールバック参照）
+- `ready_for_implementation` が false かつ設計承認済みの場合は、spec.json を補正して `ready_for_implementation: true` に更新する。
 
-### ステップ2: タスクの選択
+### ステップ2: 実装スコープの選択
 
-**実行するタスクを決定**:
-- `$2` が提供された場合: 指定されたタスク番号を実行（例: "1.1" または "1,2,3"）
-- それ以外: すべての保留タスクを実行（tasks.md で未チェック `- [ ]`）
+**実行する要件を決定**:
+- `$2` が提供された場合: 指定された要件IDを実行（例: "1.1" または "1.1,2.3"）
+- それ以外: requirements.md の未実装要件を対象に実装（既存証跡から進捗を判断）
 
 ### ステップ3: TDDで実行
 
-選択された各タスクについて、Kent BeckのTDDサイクルに従う:
+選択された各要件について、Kent BeckのTDDサイクルに従う:
 
 1. **RED - 失敗するテストを書く**:
    - 次の小さな機能のテストを書く
    - テストは失敗するはず（コードがまだ存在しない）
    - 説明的なテスト名を使用
-   - 失敗したテストコマンド、失敗理由の要約、対象タスクを記録
+   - 失敗したテストコマンド、失敗理由の要約、対象要件を記録
 
 2. **GREEN - 最小限のコードを書く**:
    - テストを通過させる最もシンプルなソリューションを実装
@@ -66,17 +66,12 @@ argument-hint: <feature-name:$1> [task-numbers:$2]
    - コードカバレッジを維持または改善
    - 最終検証コマンドと結果を記録
 
-5. **完了マーク**（必須）:
-   - tasks.md でチェックボックスを `- [ ]` から `- [x]` に**必ず**更新
-   - タスク完了時に即座に更新すること（後回しにしない）
-   - 親タスクは、すべての子タスクが完了した場合にのみチェック
-
-6. **spec.json への証跡記録**（必須）:
+5. **spec.json への証跡記録**（必須）:
    - `phase: "implementation"` を設定
    - `implementation.started: true` を設定
-   - 完了したタスク番号を `implementation.tasks_completed` に追加（重複しない）
-   - `implementation.last_task` に最後に実行したタスク番号を設定
-   - `implementation.red_green_evidence` に、各タスクごとに以下の形式で追記:
+   - 完了した要件IDを `implementation.tasks_completed` に追加（既存キーを互換維持として流用、重複しない）
+   - `implementation.last_task` に最後に実行した要件IDを設定
+   - `implementation.red_green_evidence` に、各要件ごとに以下の形式で追記:
 
 ```json
 {
@@ -106,14 +101,14 @@ argument-hint: <feature-name:$1> [task-numbers:$2]
 }
 ```
 
-   - すべての通常タスクが完了した場合のみ `implementation.completed: true` を設定
+   - 対象要件すべての実装証跡が揃った場合 `implementation.completed: true` を設定
    - 実装が進んだら `quality_gates.review.status`、`quality_gates.final_check.status`、`traceability.status` を `"stale"` に更新
    - `phase_history` に `{ phase: "implementation", at, summary }` を追記
    - `updated_at` を更新
 
 ## 重要な制約
 - **TDD必須**: テストは実装コードより先に書かなければならない
-- **タスクスコープ**: 特定のタスクが要求するものだけを実装
+- **要件スコープ**: 指定された要件が要求するものだけを実装
 - **テストカバレッジ**: すべての新しいコードにテストが必要
 - **リグレッションなし**: 既存のテストは引き続き通過しなければならない
 - **設計整合性**: 実装は design.md 仕様に従わなければならない
@@ -129,8 +124,8 @@ argument-hint: <feature-name:$1> [task-numbers:$2]
 
 spec.json で指定された言語で簡潔なサマリーを提供:
 
-1. **実行されたタスク**: タスク番号とテスト結果
-2. **ステータス**: 完了タスクが tasks.md でマーク、残りのタスク数
+1. **実行された要件**: 要件IDとテスト結果
+2. **ステータス**: 記録済み実装証跡数、残り要件の目安
 3. **TDD証跡**: RED/GREEN/VERIFY の記録先と、スキップした検証があれば理由
 
 **フォーマット**: 簡潔（150語以内）
@@ -139,22 +134,22 @@ spec.json で指定された言語で簡潔なサマリーを提供:
 
 ### エラーシナリオ
 
-**タスクが未承認またはSpecファイルが見つからない**:
-- **実行停止**: すべてのspecファイルが存在し、タスクが承認されていなければならない
-- **提案アクション**: "前のフェーズを完了してください: `/requirements`、`/design`、`/tasks`"
+**要件/設計が未承認またはSpecファイルが見つからない**:
+- **実行停止**: すべてのspecファイルが存在し、要件と設計が承認されていなければならない
+- **提案アクション**: "前のフェーズを完了してください: `/requirements`、`/design`"
 
 **テスト失敗**:
 - **実装停止**: 続行前に失敗したテストを修正
 - **アクション**: デバッグして修正、その後再実行
-- **証跡**: 失敗した RED または VERIFY のコマンドと原因を spec.json に記録し、タスクは未完了のままにする
+- **証跡**: 失敗した RED または VERIFY のコマンドと原因を spec.json に記録し、対象要件は未完了のままにする
 
-### タスク実行
+### 要件指定実行
 
-**特定のタスクを実行**:
-- `/impl $1 1.1` - 単一タスク
-- `/impl $1 1,2,3` - 複数タスク
+**特定の要件を実行**:
+- `/impl $1 1.1` - 単一要件
+- `/impl $1 1.1,2.3` - 複数要件
 
-**すべての保留タスクを実行**:
-- `/impl $1` - すべての未チェックタスク
+**未実装要件を順次実行**:
+- `/impl $1` - 未実装要件を順次実行
 
 </output>

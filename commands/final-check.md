@@ -10,7 +10,7 @@ argument-hint: <feature-name:$1>
 - **成功基準**:
   - すべての必須フェーズが完了
   - review ゲートが PASS
-  - 完了タスクに TDD 証跡がある
+  - 完了要件に TDD 証跡がある
   - trace が最新で未マップ要件を示していない
   - spec.json に最終判定が記録される
 </background_information>
@@ -19,24 +19,27 @@ argument-hint: <feature-name:$1>
 ## コアタスク
 機能 **$1** の最終チェックを実施し、`.cursor/$1/final-check.md` と spec.json に結果を記録する。
 
+本コマンドは各ゲート結果（requirements/design/review/trace/TDD証跡）を
+集約し、**リリース可否** のみを判断する。
+
 ## 実行ステップ
 
 ### ステップ1: コンテキストの読み込み
 - `.cursor/$1/spec.json`
 - `.cursor/$1/requirements.md`
 - `.cursor/$1/design.md`
-- `.cursor/$1/tasks.md`
 - `.cursor/$1/review.md`（存在する場合）
 - `.cursor/$1/trace.md`（存在する場合）
 - `implementation.red_green_evidence`
+- `.cursor/rules/spec-state-management.md`
 
 ### ステップ2: チェック項目
 以下を確認する:
 
-1. **成果物**: requirements/design/tasks が存在し、生成済みフラグが true
-2. **承認**: requirements/design/tasks が承認済み
-3. **実装**: 通常タスクが完了し、`implementation.completed` が true または tasks.md から完了と判断できる
-4. **TDD証跡**: 完了タスクごとに RED/GREEN/VERIFY が記録されている
+1. **成果物**: requirements/design が存在し、生成済みフラグが true
+2. **承認**: requirements/design が承認済み
+3. **実装**: 対象要件の実装が進み、`implementation.completed` が true または証跡から完了と判断できる
+4. **TDD証跡**: 完了記録ごとに RED/GREEN/VERIFY が記録されている
 5. **レビュー**: `quality_gates.review.status` が `"passed"`
 6. **トレース**: `traceability.status` が `"current"` で、未マップ要件がない
 7. **未解決リスク**: 未実行テスト、手動確認、既知の制約が残っていないか
@@ -53,7 +56,6 @@ READY / NOT READY
 ## チェック結果
 - Requirements:
 - Design:
-- Tasks:
 - Implementation:
 - Review:
 - Trace:
@@ -67,6 +69,7 @@ READY / NOT READY
 ```
 
 ### ステップ4: spec.json の更新
+- 共通更新は `.cursor/rules/spec-state-management.md` に従う
 - すべてのチェックが通過した場合:
   - `quality_gates.final_check.status: "passed"`
   - `ready_for_release: true`
@@ -78,8 +81,6 @@ READY / NOT READY
 - 共通更新:
   - `quality_gates.final_check.checked_at` を更新
   - `quality_gates.final_check.summary` に判定要約を設定
-  - `phase_history` に `{ phase, at, summary }` を追記
-  - `updated_at` を更新
 
 ## 重要な制約
 - 最終チェックは新しい実装を行わない
@@ -106,6 +107,6 @@ spec.json で指定された言語で以下を出力:
 ## 安全性とフォールバック
 - **review 未実行**: `/review $1` を案内して NOT READY
 - **trace 未生成/古い**: `/trace $1` を案内して NOT READY
-- **TDD証跡不足**: 対象タスクを列挙して NOT READY
-- **タスク未完了**: 残タスクを列挙して NOT READY
+- **TDD証跡不足**: 対象要件を列挙して NOT READY
+- **要件実装未完了**: 未完了要件を列挙して NOT READY
 </output>

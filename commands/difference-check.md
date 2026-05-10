@@ -18,12 +18,16 @@ argument-hint: <feature-name:$1>
 ## コアタスク
 承認済み要件と既存コードベースに基づいて、機能 **$1** の実装ギャップを分析する。
 
+このコマンドは **分析専用** であり、設計書を確定する責務は持たない。
+典型フローは `difference-check -> design`。
+
 ## 実行ステップ
 
 ### ステップ1: コンテキストの読み込み
 - `.cursor/$1/spec.json` から言語とメタデータを読み込み
 - `.cursor/$1/requirements.md` から要件を読み込み
-- `.cursor/$1/design.md`、`tasks.md`、`trace.md`（存在する場合）を読み込み
+- `.cursor/$1/design.md`、`trace.md`（存在する場合）を読み込み
+- `.cursor/rules/spec-state-management.md` と `.cursor/rules/gate-invalidation-policy.md` を読み込み
 
 ### ステップ2: 分析ガイドラインの読み込み
 - `.cursor/rules/gap-analysis.md` から包括的な分析フレームワークを読み込み
@@ -39,8 +43,11 @@ argument-hint: <feature-name:$1>
 - gap-analysis.md の出力ガイドラインに従って包括的なギャップ分析を作成
 - トレードオフを含む複数の実行可能なオプションを提示
 - さらなる調査が必要な領域にフラグを立てる
-- 既存の `trace.md` が古い、または要件IDとタスクIDの対応に差分がある場合は `/trace $1` の再実行を推奨する
-- spec.json は原則として破壊的に更新しない。差分により既存ゲートが古いと判断できる場合のみ、`quality_gates.review.status` / `quality_gates.final_check.status` / `traceability.status` を `"stale"` に更新し、`phase_history` に要約を追記する
+- 既存の `trace.md` が古い、または要件IDと実装証跡IDの対応に差分がある場合は `/trace $1` の再実行を推奨する
+- spec.json は原則として破壊的に更新しない。差分により既存ゲートが古いと判断できる場合のみ、
+  `.cursor/rules/gate-invalidation-policy.md` に従って `quality_gates.review.status` /
+  `quality_gates.final_check.status` / `traceability.status` を `stale` に更新し、
+  共通状態更新は `.cursor/rules/spec-state-management.md` に従う
 
 ## 重要な制約
 - **決定より情報**: 最終的な実装選択ではなく、分析とオプションを提供

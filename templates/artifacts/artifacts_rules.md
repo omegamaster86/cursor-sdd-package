@@ -19,12 +19,12 @@
 - **design 前半〜中盤**: `.cursor/<feature>/artifacts/data-model.md`
   - MVPの主要エンティティとFKを Mermaid + FK表で固定
   - Mermaid の `erDiagram` には **カラム定義ブロック（PK/UK/FK）** を含める（登場するテーブルは原則ブロックも書く）
-- **design 中盤〜終盤（tasks前）**: `.cursor/<feature>/artifacts/table-definition.md`
+- **design 中盤〜終盤（impl前）**: `.cursor/<feature>/artifacts/table-definition.md`
   - 制約/インデックス/編集仕様まで“契約化”
-- **tasks**: 3成果物（存在する場合）を読み取り、タスクがスコープ逸脱しないようにする
+- **impl**: 3成果物（存在する場合）を読み取り、実装がスコープ逸脱しないようにする
 
 ## 生成方法（推奨）
-AI コマンド（`/requirements` / `/design` / `/tasks`）が `.cursor/rules/artifacts-generation.md` に従って **安全に初期作成**（既存は上書きしない）する。
+AI コマンド（`/requirements` / `/design` / `/impl`）が `.cursor/rules/artifacts-generation.md` に従って **安全に初期作成**（既存は上書きしない）する。
 
 ## 更新ポリシー
 - **差分更新が基本**（全面書き換えしない）

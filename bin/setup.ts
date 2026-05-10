@@ -67,17 +67,16 @@ function setup() {
 
   console.log('\n✨ Cursor SDD setup complete!\n');
   console.log('Available commands:');
-  console.log('  /requirements      - Generate requirements');
-  console.log('  /requirements-import - Import existing requirements');
-  console.log('  /design            - Create design document');
-  console.log('  /check-design      - Validate design document');
-  console.log('  /tasks             - Generate tasks');
-  console.log('  /impl              - Implementation');
-  console.log('  /review            - Review implementation evidence');
-  console.log('  /trace             - Generate traceability');
-  console.log('  /final-check       - Final readiness check');
-  console.log('  /status            - Check status');
-  console.log('  /difference-check  - Check differences\n');
+  console.log('  /requirements        - Generate requirements (recommended entry)');
+  console.log('  /requirements-import - Import existing requirements (compat flow)');
+  console.log('  /design              - Create design document');
+  console.log('  /check-design        - Validate design document (optional)');
+  console.log('  /impl                - Implement from requirements/design with TDD');
+  console.log('  /trace               - Generate requirement-to-impl mapping');
+  console.log('  /review              - Review implementation evidence');
+  console.log('  /final-check         - Final readiness check');
+  console.log('  /difference-check    - Gap analysis for brownfield (optional)');
+  console.log('  /status              - Check status\n');
 }
 
 setup();

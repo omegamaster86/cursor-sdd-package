@@ -27,10 +27,6 @@
       "approved": false,
       "checked": false,
       "check_result": null
-    },
-    "tasks": {
-      "generated": false,
-      "approved": false
     }
   },
   "implementation": {

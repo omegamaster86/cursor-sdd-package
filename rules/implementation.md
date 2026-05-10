@@ -1,33 +1,23 @@
 # 実装ルール
 
-## 必須: タスク完了時のチェックマーク更新
+## 必須: 要件単位の実装記録
 
-**タスクを実装完了したら、必ず即座に tasks.md のチェックボックスを更新すること。**
+**要件を実装完了したら、必ず同じターンで spec.json に実装証跡を記録すること。**
 
 ### ルール
 
-1. タスク実装完了後、**同じターン内で** tasks.md の該当タスクを `- [ ]` から `- [x]` に更新
+1. 実装完了後、**同じターン内で** `implementation.red_green_evidence` に RED/GREEN/REFACTOR/VERIFY を追記
 2. 後回しにしない、忘れない、例外なし
-3. 親タスクは、すべての子タスクが完了した場合にのみチェック
-
-### 例
-
-```markdown
-# 実装前
-- [ ] 2.1 アンケート一覧 API を実装
-
-# 実装後（即座に更新）
-- [x] 2.1 アンケート一覧 API を実装
-```
+3. `implementation.tasks_completed` と `implementation.last_task` を必ず更新（キー名は互換維持）
 
 ### 理由
 
-- タスクの進捗を正確に追跡するため
+- 要件実装の進捗を正確に追跡するため
 - ユーザーが何度も指摘する必要がないようにするため
 
 ## 必須: RED/GREEN証跡の記録
 
-**実装タスクを完了扱いにする前に、spec.json の `implementation.red_green_evidence` に TDD サイクルの証跡を残すこと。**
+**実装要件を完了扱いにする前に、spec.json の `implementation.red_green_evidence` に TDD サイクルの証跡を残すこと。**
 
 ### 記録する内容
 
