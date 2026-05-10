@@ -67,7 +67,6 @@ function setup() {
 
   console.log('\n✨ Cursor SDD setup complete!\n');
   console.log('Available commands:');
-  console.log('  /init              - Initialize project specs');
   console.log('  /requirements      - Generate requirements');
   console.log('  /requirements-import - Import existing requirements');
   console.log('  /design            - Create design document');

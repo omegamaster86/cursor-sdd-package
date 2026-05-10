@@ -30,18 +30,12 @@ npx cursor-sdd
 npx cursor-sdd --force
 ```
 
-## セットアップ
-rules/frontend.mdには現在ルールは記載されていません。
-みなさんが普段使用しているルールを記載してください。
-ファイルの名称はみなさんで変更していただいてもOKですが、各ルールではfrontend.mdで読み込んでいるので、frontend.mdで検索して、徐々にファイル名を変更 or ファイル追加した方が良いと思います。
-
 ## 使い方
 
 Cursor IDE で以下のコマンドが使えるようになります：
 
 | コマンド | 説明 |
 |---------|------|
-| `/init` | プロジェクト仕様の初期化 |
 | `/requirements` | 要件定義書の生成 |
 | `/requirements-import` | 既存要件のインポート |
 | `/design` | 技術設計書の作成 |
@@ -54,19 +48,17 @@ Cursor IDE で以下のコマンドが使えるようになります：
 | `/status` | 進捗確認 |
 | `/difference-check` | 差分チェック |
 
-### `/init` の使い分け
+### 入口（推奨）
 
-- **PJ全体を初期化**: `/init <プロジェクト説明>`
-- **個別画面/機能を初期化**: `/init --feature billing-history <画面の説明>`
-  - `--feature` / `-f` で指定したキーが `.cursor/<PJ名>/<feature>` ディレクトリとして作成されます
-  - 以降の `/requirements` などは `<PJ名>/<feature>` を引数に渡してください（例: `/requirements my-project/billing-history`）
+- **まず `/requirements` から開始**: `/requirements <feature-name> <要件/背景メモ>`
+- 既に `.cursor/<feature-name>/` があれば、その内容を読み込んで要件を更新
+- 未初期化なら、`/requirements` が初期化を兼ねて作成してから要件生成
 
 ## 含まれるファイル
 
 ```
 .cursor/
 ├── commands/          # Cursor コマンド定義
-│   ├── init.md
 │   ├── requirements.md
 │   ├── requirements-import.md
 │   ├── design.md
@@ -108,8 +100,8 @@ Cursor IDE で以下のコマンドが使えるようになります：
 ## ワークフロー
 
 ```
-/init → /requirements → /design → /tasks → /impl → /trace → /review → /final-check
-                ↑                       ↓          ↓        ↓
+/requirements → /design → /tasks → /impl → /trace → /review → /final-check
+      ↑                  ↓          ↓        ↓
             /status ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
 ```
 
