@@ -1,29 +1,33 @@
 <meta>
-description: 既存の要件ドキュメントをインポート（/initで作成済みのrequirements.mdから読み取り）
+description: 既存の要件ドキュメントをインポート（互換コマンド）
 argument-hint: <feature-name:$1>
 </meta>
 
 # 既存要件インポート
 
+> 互換運用のための専用コマンド。将来的に `/requirements --import` への統合を検討するが、
+> 現時点では本コマンドを正式サポートする。
+
 <background_information>
-- **ミッション**: `/init` で作成された requirements.md に記載された既存要件を正式な要件として取り込み、spec駆動開発のフローに統合
+- **ミッション**: 初期化済み requirements.md に記載された既存要件を正式な要件として取り込み、spec駆動開発のフローに統合
 - **成功基準**:
   - `.cursor/$1/requirements.md` の「プロジェクト説明」セクションを要件として整形
   - メタデータを更新してインポート状況を追跡
   - 次のフェーズ（設計生成）への明確なパスを提供
-- **前提**: `/init` 実行時に、ユーザーが社内要件をプロジェクト説明として入力済み
+- **前提**: `/requirements` の自動初期化で、ユーザーが要件の元情報を入力済み
 </background_information>
 
 <instructions>
 ## コアタスク
-`/init` で作成された `.cursor/$1/requirements.md` の「プロジェクト説明」セクションを読み取り、正式な要件として整形・統合する。
+初期化済みの `.cursor/$1/requirements.md` の「プロジェクト説明」セクションを読み取り、正式な要件として整形・統合する。
 
 ## 実行ステップ
 
 ### ステップ1: 前提条件の確認
-- `.cursor/$1/spec.json` が存在することを確認（/init 実行済み）
+- `.cursor/$1/spec.json` が存在することを確認（初期化済み）
 - `.cursor/$1/requirements.md` が存在することを確認
 - 「## プロジェクト説明（入力）」セクションに内容があることを確認
+- `.cursor/rules/spec-state-management.md` と `.cursor/rules/gate-invalidation-policy.md` を読み込み
 
 ### ステップ2: 既存要件の読み込み
 - `.cursor/$1/requirements.md` から「## プロジェクト説明（入力）」セクションの内容を抽出
@@ -38,11 +42,15 @@ argument-hint: <feature-name:$1>
 - 要件には連番を付与（1, 2, 3...）
 
 ### ステップ4: メタデータの更新
-spec.json を以下のように更新:
+spec.json は、共通ルール `.cursor/rules/spec-state-management.md` と
+`.cursor/rules/gate-invalidation-policy.md` に従って更新する。
+
 - `phase: "requirements-imported"` を設定
 - `approvals.requirements.generated: true` を設定
+- `approvals.requirements.approved: false` を設定
 - `approvals.requirements.source: "imported"` を追加
-- `updated_at` タイムスタンプを更新
+- 下流成果物が既にある場合は、影響確認が必要なため `quality_gates.review.status` と `quality_gates.final_check.status` を `not_run` または `stale` に更新
+- `traceability.status: "stale"` を設定
 
 ## 重要な制約
 - 既存要件の内容を勝手に変更・削除しない
@@ -81,9 +89,9 @@ spec.json で指定された言語で以下を出力:
 ## 安全性とフォールバック
 
 ### エラーシナリオ
-- **spec.json が見つからない**: `/init` の実行を案内
-- **requirements.md が見つからない**: `/init` の実行を案内
-- **プロジェクト説明が空**: `/init` 時に要件を入力するよう案内
+- **spec.json が見つからない**: `/requirements $1 <要件メモ>` で初期化兼要件生成を案内
+- **requirements.md が見つからない**: `/requirements $1 <要件メモ>` で初期化兼要件生成を案内
+- **プロジェクト説明が空**: `/requirements $1 <要件メモ>` で要件の元情報入力を案内
 - **既に要件セクションに内容がある**: 上書きするか確認をユーザーに求める
 
 ### 次のフェーズ: 設計生成
@@ -95,4 +103,4 @@ spec.json で指定された言語で以下を出力:
 
 **修正が必要な場合**:
 - requirements.md を直接編集
-- または `/init` からやり直し
+- または `/requirements $1 <要件メモ>` を再実行

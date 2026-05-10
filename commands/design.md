@@ -26,6 +26,7 @@ argument-hint: <feature-name:$1> [-y:$2]
 - `.cursor/$1/spec.json`、`requirements.md`、`design.md`（存在する場合）
 - `.cursor/templates/specs/design.md` からドキュメント構造
 - `.cursor/rules/design-principles.md` から設計原則
+- `.cursor/rules/spec-state-management.md` と `.cursor/rules/gate-invalidation-policy.md` から共通状態更新規則
 - `.cursor/templates/specs/research.md` から発見ログ構造
 - **`package.json`（プロジェクトルートに存在する場合）**: 既存の依存関係とバージョンを把握
 - `.cursor/rules/artifacts-generation.md`（成果物の安全な初期作成ルール）を読み込み
@@ -40,6 +41,9 @@ argument-hint: <feature-name:$1> [-y:$2]
 ### ステップ2: 発見と分析
 
 **重要: このフェーズは設計が完全で正確な情報に基づくことを保証。**
+
+- ブラウンフィールドでは、必要に応じて先に `/difference-check $1` を実行し、
+  既存実装とのギャップ情報を設計に取り込む。
 
 1. **機能タイプの分類**:
    - **新機能**（グリーンフィールド）→ フル発見が必要
@@ -79,7 +83,7 @@ argument-hint: <feature-name:$1> [-y:$2]
    - 統合ポイントと依存関係
    - 特定されたリスクと緩和戦略
    - 潜在的なアーキテクチャパターンと境界オプション（詳細を `research.md` に記録）
-   - 将来のタスク用の並列化考慮事項（依存関係を `research.md` にキャプチャ）
+  - 将来の実装計画に向けた依存関係と実行順の考慮事項（`research.md` にキャプチャ）
    - **パッケージ選定結果**:
      - 既存パッケージの活用リスト（package.json から）
      - 追加推奨パッケージ（理由・用途を明記）
@@ -107,10 +111,15 @@ argument-hint: <feature-name:$1> [-y:$2]
    - セクションが更新された見出し（"アーキテクチャパターンと境界マップ"、"技術スタックと整合性"、"コンポーネントとインターフェース契約"）を反映し、`research.md` からのサポート詳細を参照することを確認
 
 3. **spec.json のメタデータを更新**:
+   - 共通更新は `.cursor/rules/spec-state-management.md` と
+     `.cursor/rules/gate-invalidation-policy.md` に従う
    - `phase: "design-generated"` を設定
    - `approvals.design.generated: true, approved: false` を設定
+   - `approvals.design.checked: false` と `approvals.design.check_result: null` を設定
    - `approvals.requirements.approved: true` を設定
-   - `updated_at` タイムスタンプを更新
+   - `quality_gates.design_check.status: "not_run"` を設定
+   - `quality_gates.review.status` / `quality_gates.final_check.status` / `traceability.status` は
+     ポリシーに従って `not_run` または `stale` へ更新
 
 ## 重要な制約
 - **型定義は設計ドキュメントに含めない**:
@@ -145,6 +154,7 @@ spec.json で指定された言語で簡潔なサマリーを提供:
    - 既存パッケージで活用するもの
    - 追加推奨パッケージ（あれば理由と共に）
 5. **次のアクション**: 承認ワークフローのガイダンス（安全性とフォールバック参照）
+6. **状態更新**: design check / review / final check が未実行に戻った場合は明記
 
 **フォーマット**: 簡潔なMarkdown（200語以内）- これはコマンド出力であり、設計ドキュメント自体ではない
 
@@ -175,15 +185,15 @@ spec.json で指定された言語で簡潔なサマリーを提供:
 - **無効な要件ID**:
   - **実行停止**: requirements.md に数値IDがない、または非数値の見出し（例: "Requirement A"）がある場合、停止して続行前に requirements.md の修正を指示。
 
-### 次のフェーズ: タスク生成
+### 次のフェーズ: 実装
 
 **設計が承認された場合**:
 - `.cursor/$1/design.md` で生成された設計をレビュー
-- **オプション**: `/validate-design $1` でインタラクティブな品質レビューを実行
-- その後 `/tasks $1 -y` で実装タスクを生成
+- **オプション**: `/check-design $1` でインタラクティブな品質レビューを実行
+- その後 `/impl $1` で実装を開始
 
 **修正が必要な場合**:
 - フィードバックを提供し `/design $1` を再実行
 - 既存の設計は参照として使用（マージモード）
 
-**注記**: タスク生成に進む前に設計の承認が必須。
+**注記**: 実装に進む前に設計の承認が必須。

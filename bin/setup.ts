@@ -8,7 +8,7 @@ const isForce = process.argv.includes('--force');
 
 // パッケージのルートディレクトリを取得
 const packageRoot = path.resolve(__dirname, '..');
-const sourceDir = path.join(packageRoot, 'now');
+const sourceDir = packageRoot;
 const FOLDERS = ['commands', 'rules', 'templates'];
 
 // プロジェクトのルートを取得
@@ -67,15 +67,16 @@ function setup() {
 
   console.log('\n✨ Cursor SDD setup complete!\n');
   console.log('Available commands:');
-  console.log('  /init              - Initialize project specs');
-  console.log('  /requirements      - Generate requirements');
-  console.log('  /requirements-import - Import existing requirements');
-  console.log('  /design            - Create design document');
-  console.log('  /check-design      - Validate design document');
-  console.log('  /tasks             - Generate tasks');
-  console.log('  /impl              - Implementation');
-  console.log('  /status            - Check status');
-  console.log('  /difference-check  - Check differences\n');
+  console.log('  /requirements        - Generate requirements (recommended entry)');
+  console.log('  /requirements-import - Import existing requirements (compat flow)');
+  console.log('  /design              - Create design document');
+  console.log('  /check-design        - Validate design document (optional)');
+  console.log('  /impl                - Implement from requirements/design with TDD');
+  console.log('  /trace               - Generate requirement-to-impl mapping');
+  console.log('  /review              - Review implementation evidence');
+  console.log('  /final-check         - Final readiness check');
+  console.log('  /difference-check    - Gap analysis for brownfield (optional)');
+  console.log('  /status              - Check status\n');
 }
 
 setup();

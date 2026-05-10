@@ -37,6 +37,13 @@ argument-hint: <feature-name:$1>
 ### ステップ4: 判定と次のステップの提供
 - 根拠を伴う明確な GO/NO-GO 判定
 - 判定に基づいた進め方のガイド
+- spec.json を更新:
+  - `approvals.design.checked: true`
+  - `approvals.design.check_result: "go"` または `"no-go"`
+  - `quality_gates.design_check.status: "passed"` または `"failed"`
+  - `quality_gates.design_check.checked_at` と `summary` を更新
+  - `phase_history` に `{ phase: "design-checked", at, summary }` を追記
+  - `updated_at` を更新
 
 ## 重要な制約
 - **品質保証であり完璧追求ではない**: 許容可能なリスクを受け入れる
@@ -58,6 +65,7 @@ spec.json で指定された言語で以下を出力:
 2. **重大な問題**: 最大3つ、design-review.md フォーマットに従う
 3. **設計の強み**: 1-2つのポジティブな側面
 4. **最終評価**: 根拠と次のステップを伴う GO/NO-GO 判定
+5. **状態更新**: spec.json の design_check 結果を明記
 
 **フォーマット要件**:
 - 明確さのためMarkdown見出しを使用
@@ -71,12 +79,11 @@ spec.json で指定された言語で以下を出力:
 - **設計が未生成**: spec.json で設計フェーズが生成済みとしてマークされていない場合、警告を出すがレビューを続行
 - **言語が未定義**: spec.json で言語が指定されていない場合、英語（`en`）をデフォルトに
 
-### 次のフェーズ: タスク生成
+### 次のフェーズ: 実装
 
 **設計が検証に合格した場合（GO判定）**:
 - フィードバックをレビューし、必要に応じて変更を適用
-- `/tasks $1` を実行して実装タスクを生成
-- または `/tasks $1 -y` で自動承認して直接進行
+- `/impl $1` を実行して実装を開始
 
 **設計の修正が必要な場合（NO-GO判定）**:
 - 特定された重大な問題に対処
