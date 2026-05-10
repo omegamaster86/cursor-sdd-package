@@ -8,7 +8,7 @@ const isForce = process.argv.includes('--force');
 
 // パッケージのルートディレクトリを取得
 const packageRoot = path.resolve(__dirname, '..');
-const sourceDir = path.join(packageRoot, 'now');
+const sourceDir = packageRoot;
 const FOLDERS = ['commands', 'rules', 'templates'];
 
 // プロジェクトのルートを取得
